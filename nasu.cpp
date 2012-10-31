@@ -318,11 +318,11 @@ int main(int argc, char **argv)
 		Mix_VolumeChunk(stepsnd[1], MIX_MAX_VOLUME*0.75f);
 		stepsnd[2] = Mix_LoadWAV("nasustep3.ogg");
 		Mix_VolumeChunk(stepsnd[2], MIX_MAX_VOLUME*0.75f);
-		getsnd[0] = Mix_LoadWAV("nasuget.ogg");
+		getsnd[0] = Mix_LoadWAV("nasuget1.ogg");
 		Mix_VolumeChunk(getsnd[0], MIX_MAX_VOLUME);
-		getsnd[1] = Mix_LoadWAV("nasuget.ogg");
+		getsnd[1] = Mix_LoadWAV("nasuget2.ogg");
 		Mix_VolumeChunk(getsnd[1], MIX_MAX_VOLUME);
-		getsnd[2] = Mix_LoadWAV("nasuget.ogg");
+		getsnd[2] = Mix_LoadWAV("nasuget3.ogg");
 		Mix_VolumeChunk(getsnd[2], MIX_MAX_VOLUME);
 		losesnd = Mix_LoadWAV("nasulose.ogg");
 		Mix_VolumeChunk(losesnd, MIX_MAX_VOLUME);
