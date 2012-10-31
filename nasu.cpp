@@ -300,8 +300,8 @@ int main(int argc, char **argv)
 	// step sounds: 1.1, 0.9, 1.5
 	// nasu get sounds: 1.0, 1.1, 1.5
 
-	Mix_Chunk *stepsnd;
-	Mix_Chunk *getsnd;
+	Mix_Chunk *stepsnd[3];
+	Mix_Chunk *getsnd[3];
 	Mix_Chunk *losesnd;
 	Mix_Music *titlemus;
 	Mix_Music *gamemus;
@@ -312,12 +312,20 @@ int main(int argc, char **argv)
 		Mix_OpenAudio(44100,AUDIO_S16SYS,2,1024);
 		Mix_AllocateChannels(8);
 	
-		stepsnd = Mix_LoadWAV("nasustep.ogg");
-		Mix_VolumeChunk(stepsnd, MIX_MAX_VOLUME*0.75f);
-		getsnd = Mix_LoadWAV("nasuget.ogg");
-		Mix_VolumeChunk(stepsnd, MIX_MAX_VOLUME);
+		stepsnd[0] = Mix_LoadWAV("nasustep1.ogg");
+		Mix_VolumeChunk(stepsnd[0], MIX_MAX_VOLUME*0.75f);
+		stepsnd[1] = Mix_LoadWAV("nasustep2.ogg");
+		Mix_VolumeChunk(stepsnd[1], MIX_MAX_VOLUME*0.75f);
+		stepsnd[2] = Mix_LoadWAV("nasustep3.ogg");
+		Mix_VolumeChunk(stepsnd[2], MIX_MAX_VOLUME*0.75f);
+		getsnd[0] = Mix_LoadWAV("nasuget.ogg");
+		Mix_VolumeChunk(getsnd[0], MIX_MAX_VOLUME);
+		getsnd[1] = Mix_LoadWAV("nasuget.ogg");
+		Mix_VolumeChunk(getsnd[1], MIX_MAX_VOLUME);
+		getsnd[2] = Mix_LoadWAV("nasuget.ogg");
+		Mix_VolumeChunk(getsnd[2], MIX_MAX_VOLUME);
 		losesnd = Mix_LoadWAV("nasulose.ogg");
-		Mix_VolumeChunk(stepsnd, MIX_MAX_VOLUME);
+		Mix_VolumeChunk(losesnd, MIX_MAX_VOLUME);
 	
 		titlemus = Mix_LoadMUS("nasutitle.ogg");
 		gamemus = Mix_LoadMUS("nasugame.ogg");
@@ -441,7 +449,7 @@ int main(int argc, char **argv)
 								player.bIsJumping = true;
 								player.vel.y = -80.f;
 								if ( !bNoSound )
-									Mix_PlayChannel(-1,stepsnd,0);
+									Mix_PlayChannel(-1,stepsnd[2],0);
 							}
 							break;
 					}
@@ -606,12 +614,12 @@ int main(int argc, char **argv)
 						blink = 0.f;
 						if ( !bNoSound )
 						{
-							if ( player.vel.x != 0.f && player.bIsJumping )
+							if ( player.vel.x != 0.f && !player.bIsJumping )
 							{
 								if ( bDerp )
-									Mix_PlayChannel(-1,stepsnd,0);
+									Mix_PlayChannel(-1,stepsnd[0],0);
 								else
-									Mix_PlayChannel(-1,stepsnd,0);
+									Mix_PlayChannel(-1,stepsnd[1],0);
 							}
 						}
 					}
@@ -644,7 +652,7 @@ int main(int argc, char **argv)
 									TimeUntilNextNasu = 0.1f;
 								nasu.pos = NASU_Vect{4.f,4.f};
 								if ( !bNoSound )
-									Mix_PlayChannel(-1,getsnd,0);
+									Mix_PlayChannel(-1,getsnd[2],0);
 								pts3time += 0.75f;
 								points3.pos = Nasupos;
 								points3.vel.y = -50.f;
@@ -660,7 +668,7 @@ int main(int argc, char **argv)
 									TimeUntilNextNasu = 0.1f;
 								nasu.pos = NASU_Vect{4.f,4.f};
 								if ( !bNoSound )
-									Mix_PlayChannel(-1,getsnd,0);
+									Mix_PlayChannel(-1,getsnd[0],0);
 								pts1time += 0.75f;
 								points1.pos = Nasupos;
 								points1.vel.y = -50.f;
@@ -716,7 +724,7 @@ int main(int argc, char **argv)
 							TimeUntilNextNasuB = 25.f+(difficulty*0.1f);
 							nasu_b.pos = NASU_Vect{12.f,4.f};
 							if ( !bNoSound )
-								Mix_PlayChannel(-1,getsnd,0);
+								Mix_PlayChannel(-1,getsnd[1],0);
 							pts2time += 0.75f;
 							points2.pos = Nasubpos;
 							points2.vel.y = -50.f;
@@ -837,8 +845,12 @@ int main(int argc, char **argv)
 	if ( !bNoSound )
 	{
 		// Free audio
-		Mix_FreeChunk(stepsnd);
-		Mix_FreeChunk(getsnd);
+		Mix_FreeChunk(stepsnd[0]);
+		Mix_FreeChunk(stepsnd[1]);
+		Mix_FreeChunk(stepsnd[2]);
+		Mix_FreeChunk(getsnd[0]);
+		Mix_FreeChunk(getsnd[1]);
+		Mix_FreeChunk(getsnd[2]);
 		Mix_FreeChunk(losesnd);
 		Mix_FreeMusic(titlemus);
 		Mix_FreeMusic(gamemus);
