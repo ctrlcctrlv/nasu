@@ -1,0 +1,22 @@
+#
+# Windows-specific makefile
+# SDL headers are expected to be in the default mingw directory (C:\mingw)
+#
+# Autoinstall steps were reduced to just making a new directory called "Distrib"
+# and putting the files there. Where it all ends up is up to the user
+#
+CC := gcc
+CFLAGS := --std=c++11 -O2 -pipe
+LDFLAGS := -Wl -O1
+LIBS := -lstdc++ -lSDL -lSDLmain -lSDL_image -lSDL_ttf -lSDL_mixer -lSDL_gfx -lm
+.PHONY : clean
+nasu : obj
+	$(CC) $(LIBS) nasu.o -o nasu.exe
+obj:
+	$(CC) $(CFLAGS) -c nasu.cpp -o nasu.o
+clean:
+	DEL /F nasu.o
+install:
+	MAKEDIR Distrib
+	MOVE nasu.exe Distrib
+	COPY gamedata\* Distrib

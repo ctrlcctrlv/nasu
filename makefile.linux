@@ -1,0 +1,37 @@
+#
+# Linux-specific makefile
+#
+# Final game ends up being installed to /opt, but executable gets a
+# symlink on /usr/bin
+#
+# Install-related steps require root access, as usual
+# 
+# If your distro doesn't place SDL headers in the specified directory
+# then that's quite weird
+#
+CC := gcc
+CFLAGS := --std=c++11 -O2 -pipe -I/usr/include/SDL
+LDFLAGS := -Wl -O1
+LIBS := -lstdc++ -lSDL -lSDLmain -lSDL_image -lSDL_ttf -lSDL_mixer -lSDL_gfx -lm
+.PHONY : clean install uninstall
+nasu : obj
+	$(CC) $(LIBS) nasu.o -o nasu
+obj:
+	$(CC) $(CFLAGS) -c nasu.cpp -o nasu.o
+clean:
+	rm -f nasu.o
+install:
+	mkdir /opt/nasu
+	mv nasu /opt/nasu
+	cp gamedata/* /opt/nasu
+	ln -s /opt/nasu/nasu /usr/bin/nasu
+uninstall:
+	rm -rf /opt/nasu
+	rm -f /usr/bin/nasu
+reinstall:
+	rm -rf /opt/nasu
+	rm -f /usr/bin/nasu
+	mkdir /opt/nasu
+	mv nasu /opt/nasu
+	cp gamedata/* /opt/nasu
+	ln -s /opt/nasu/nasu /usr/bin/nasu

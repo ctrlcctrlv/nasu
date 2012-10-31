@@ -1,11 +1,15 @@
-This is the source code for NASU Standalone 1.1.1.
+NASU Standalone 1.2, a port to SDL because SFML sucks horribly.
 
-It's not exactly easy to understand, I don't leave any comments or anything in my code.
+I tried to keep the source well-written and well-documented.
 
-Support for Windows has been temporarily dropped until I find a way to get SFML 2.0 to work there. Unluckily, there's no SFML 1.6 version of the game to include the changes in this version, just like there was a 1.0.3 for 1.1.
+Support for Windows is just perfect now.
 
-On Linux: Use the makefile. Just make and then sudo make install. I also provided targets "uninstall" and "reinstall". Obviously, it requires gcc and sfml.
+Will try to support other platforms later.
 
-As of today, I still have to rewrite everything from scratch AGAIN because SFML got yet another huge fucking overhaul in a minor version increase.
+Building: Use the makefile. Just make and then sudo make install. I also provided targets "uninstall" and "reinstall".
 
- - Marisa Kirisame - Sep 5th, 2012
+Requirements: SDL, SDL_image, SDL_mixer, SDL_ttf and SDL_gfx.
+
+I love SDL.
+
+ - Marisa Kirisame - Oct 30th, 2012
