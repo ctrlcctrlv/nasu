@@ -455,7 +455,7 @@ void MoveActor(NASU_Actor *a, float deltatime)
 void MovePlayer(NASU_Player *p, float deltatime)
 {
 	p->pos.x += p->vel.x*deltatime;
-	p->pos.y += p->vel.y*deltatime;0
+	p->pos.y += p->vel.y*deltatime;
 }
 /*
 #define lerp(a,b,c) (c*b+(1-c)*a)
