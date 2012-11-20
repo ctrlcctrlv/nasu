@@ -6,14 +6,14 @@
 # and putting the files there. Where it all ends up is up to the user
 #
 CC := gcc
-CFLAGS := --std=c++11 -O2 -pipe
+CFLAGS := --std=c11 -Wall -Wextra -O2 -pipe
 LDFLAGS := -Wl -O1
 LIBS := -lstdc++ -lSDL -lSDLmain -lSDL_image -lSDL_ttf -lSDL_mixer -lSDL_gfx -lm
 .PHONY : clean
 nasu : obj
 	$(CC) $(LIBS) nasu.o -o nasu.exe
 obj:
-	$(CC) $(CFLAGS) -c nasu.cpp -o nasu.o
+	$(CC) $(CFLAGS) -c nasu.c -o nasu.o
 clean:
 	DEL /F nasu.o
 install:
