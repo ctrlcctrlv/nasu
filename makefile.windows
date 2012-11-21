@@ -5,7 +5,6 @@
 # Autoinstall steps were reduced to just making a new directory called "Distrib"
 # and putting the files there. Where it all ends up is up to the user
 #
-CC := gcc
 CFLAGS := -std=c11 -Wall -Wextra -O2 -pipe -DWINDOWS -I/usr/include/SDL
 LDFLAGS := -Wall -Wextra -O1 -DWINDOWS
 LIBS := -lSDL -lSDLmain -lSDL_image -lSDL_ttf -lSDL_mixer -lSDL_gfx -lm
