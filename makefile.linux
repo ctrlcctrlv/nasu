@@ -11,11 +11,11 @@
 #
 CC := gcc
 CFLAGS := -std=c11 -Wall -Wextra -O2 -pipe -I/usr/include/SDL
-LDFLAGS := -Wall -O1
+LDFLAGS := -Wall -Wextra -O1
 LIBS := -lSDL -lSDLmain -lSDL_image -lSDL_ttf -lSDL_mixer -lSDL_gfx -lm
 .PHONY : clean install uninstall
 nasu : obj
-	$(CC) $(LIBS) helpers_pixelfunc.o helpers_drawextras.o helpers_nasudef.o nasu.o -o nasu
+	$(CC) $(LDFLAGS) $(LIBS) helpers_pixelfunc.o helpers_drawextras.o helpers_nasudef.o nasu.o -o nasu
 obj:
 	$(CC) $(CFLAGS) -c helpers_pixelfunc.c -o helpers_pixelfunc.o
 	$(CC) $(CFLAGS) -c helpers_drawextras.c -o helpers_drawextras.o
