@@ -1,18 +1,20 @@
 #
 # Linux-specific makefile
 #
-# Final game ends up being installed to its own directory inside $(PREFIX)/share/games
-# but executable gets a symlink on $(PREFIX)/bin
+# Final game ends up being installed to its own directory inside /usr/share/games
+# but executable gets a symlink on /usr/bin
+#
+# No prefix handling because due to some random fuckery of make always removing any
+# quotation marks on variables
 # 
 # If your distro doesn't place SDL headers in the specified directory
 # then that's quite weird, just specify a different value for SDLHEADERS
 #
 SDLHEADERS ?= /usr/include/SDL
-CFLAGS := -std=c11 -Wall -Wextra -O2 -pipe -I"$(SDLHEADERS)"
+CFLAGS := -std=c11 -Wall -Wextra -O2 -pipe -I$(SDLHEADERS)
 LDFLAGS := -Wall -Wextra -O1
 LIBS := -lSDL -lSDLmain -lSDL_image -lSDL_ttf -lSDL_mixer -lSDL_gfx -lm
 .PHONY : clean install uninstall
-PREFIX ?= /usr/local
 nasu : obj
 	$(CC) $(LDFLAGS) $(LIBS) helpers_pixelfunc.o helpers_drawextras.o helpers_nasudef.o nasu.o -o nasu
 obj:
@@ -24,17 +26,15 @@ clean:
 	rm -f nasu
 	rm -f *.o
 install:
-	mkdir "$(PREFIX)/share/games/nasu"
-	mv nasu "$(PREFIX)/share/games/nasu"
-	cp gamedata/* "$(PREFIX)/share/games/nasu"
-	ln -s "$(PREFIX)/share/games/nasu/nasu" /usr/bin/nasu
+	mkdir /usr/share/games/nasu
+	mv nasu /usr/bin/nasu
+	cp gamedata/* /usr/share/games/nasu
 uninstall:
-	rm -rf "$(PREFIX)/share/games/nasu"
+	rm -rf /usr/share/games/nasu
 	rm -f /usr/bin/nasu
 reinstall:
-	rm -rf "$(PREFIX)/share/games/nasu"
+	rm -rf /usr/share/games/nasu
 	rm -f /usr/bin/nasu
-	mkdir "$(PREFIX)/share/games/nasu"
-	mv nasu "$(PREFIX)/share/games/nasu"
-	cp gamedata/* "$(PREFIX)/share/games/nasu"
-	ln -s "$(PREFIX)/share/games/nasu/nasu" /usr/bin/nasu
+	mkdir /usr/share/games/nasu
+	mv nasu /usr/bin/nasu
+	cp gamedata/* /usr/share/games/nasu

@@ -6,6 +6,10 @@
 	#define strncasecmp strnicmp
 #endif
 
+#ifndef DATAPATH
+	#define DATAPATH "/usr/local/share/games/nasu"
+#endif
+
 uint32_t score = 0;
 
 // write scores to disk
@@ -37,7 +41,7 @@ int main(int argc, char **argv)
 	char filen[256];
 	snprintf(filen,256,"%s/.nasuscore",getenv("HOME"));
 	FILE *scorefil = fopen(filen,"rb");
-	chdir("/opt/nasu");
+	chdir(DATAPATH);
 #endif
 	if ( scorefil == NULL )
 	{
