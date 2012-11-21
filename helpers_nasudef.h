@@ -1,3 +1,8 @@
+#ifndef HELPERS_NASUDEF_H
+#define HELPERS_NASUDEF_H
+#ifdef __cplusplus
+extern "C" {
+#endif
 // graphic rectangle resolution
 typedef struct NASU_GfxRes
 {
@@ -57,3 +62,17 @@ typedef struct NASU_ScrnText
 	NASU_Vect pos;	// screen position
 	SDL_Color colr;	// text color
 } NASU_ScrnText;
+
+void RenderActor(SDL_Surface *screen, NASU_Actor *a);
+void RenderPlayer(SDL_Surface *screen, NASU_Player *p);
+float CalcTextW(NASU_ScrnText *t);
+float CalcTextH(NASU_ScrnText *t);
+void RenderScrnText(SDL_Surface *screen, NASU_ScrnText *t);
+bool CollidePlayer(NASU_Actor *a, NASU_Player *p);
+void MoveActor(NASU_Actor *a, float deltatime);
+void MovePlayer(NASU_Player *p, float deltatime);
+//Mix_Chunk* SndStretch(Mix_Chunk *in, float factor)
+#ifdef __cplusplus
+}
+#endif
+#endif

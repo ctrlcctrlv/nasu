@@ -13,3 +13,6 @@
 #include <SDL_image.h>
 #include <SDL_mixer.h>
 #include <SDL_framerate.h>
+#include "helpers_pixelfunc.h"
+#include "helpers_drawextras.h"
+#include "helpers_nasudef.h"
