@@ -126,22 +126,16 @@ int main(int argc, char **argv)
 		fflush(stderr);
 		return 1;
 	}
-	SDL_Rect *scrrect = NULL;
-	SDL_GetClipRect(mainscreen,scrrect);
+	SDL_Rect scrrect;
+	SDL_GetClipRect(mainscreen,&scrrect);
 	
 	// real screen that will be resized to fit
 	SDL_Surface *_realscreen = SDL_CreateRGBSurface(SDL_SWSURFACE,320,240,mainscreen->format->BitsPerPixel,mainscreen->format->Rmask,mainscreen->format->Gmask,mainscreen->format->Bmask,mainscreen->format->Amask);
 	SDL_Surface *realscreen = SDL_DisplayFormatAlpha(_realscreen);
 	SDL_FreeSurface(_realscreen);
 	
-	SDL_Rect *rscrrect = NULL;
-	SDL_GetClipRect(realscreen,rscrrect);
-
-	// I love this little thing from SDL_gfx
-	// Try to keep framerate at 60FPS most
-	FPSmanager *frameman = (FPSmanager*)malloc(sizeof(FPSmanager));
-	SDL_initFramerate(frameman);
-	SDL_setFramerate(frameman,60);
+	SDL_Rect rscrrect;
+	SDL_GetClipRect(realscreen,&rscrrect);
 	
 	// load up player
 	SDL_Surface *_playersprites = IMG_Load("player.png");
@@ -545,8 +539,8 @@ int main(int argc, char **argv)
 		}
 
 		// clear screen
-		SDL_FillRect(mainscreen,scrrect,SDL_MapRGB(mainscreen->format,0,0,0));
-		SDL_FillRect(realscreen,rscrrect,SDL_MapRGB(realscreen->format,0,0,0));
+		SDL_FillRect(mainscreen,&scrrect,SDL_MapRGB(mainscreen->format,0,0,0));
+		SDL_FillRect(realscreen,&rscrrect,SDL_MapRGB(realscreen->format,0,0,0));
 
 		// process game logic
 

@@ -10,14 +10,12 @@
 // blit one surface into another at a specific location
 extern int BlitAt( SDL_Surface *src, SDL_Rect *srcrect, SDL_Surface *dest, int x, int y, bool bcenterx, bool bcentery )
 {
-	SDL_Rect *offsetrect = malloc(sizeof(SDL_Rect));
-	offsetrect->x = bcenterx ? (x-src->w/2) : x;
-	offsetrect->y = bcentery ? (y-src->h/2) : y;
-	offsetrect->w = src->w;
-	offsetrect->h = src->h;
-	int result = SDL_BlitSurface(src,srcrect,dest,offsetrect);
-	free(offsetrect);
-	return result;
+	SDL_Rect offsetrect;
+	offsetrect.x = bcenterx ? (x-src->w/2) : x;
+	offsetrect.y = bcentery ? (y-src->h/2) : y;
+	offsetrect.w = src->w;
+	offsetrect.h = src->h;
+	return SDL_BlitSurface(src,srcrect,dest,&offsetrect);
 }
 
 // Create a surface which has the RGB values of the base surface and the Alpha values made from an average between the RGB values of the alpha mask surface
@@ -75,52 +73,47 @@ extern void RenderText( SDL_Surface *dest, TTF_Font *font, const char *text, SDL
 		fprintf(stderr,"couldn't create text box surface (%s)\n", SDL_GetError());
 		return;
 	}
-	SDL_Rect *temprect = malloc(sizeof(SDL_Rect));
-	temprect->x = 0;
-	temprect->y = 0;
-	temprect->w = width;
-	temprect->h = height;
-	SDL_FillRect(stext,temprect,SDL_MapRGB(stext->format,0,0,0));
+	SDL_Rect temprect;
+	temprect.x = 0;
+	temprect.y = 0;
+	temprect.w = width;
+	temprect.h = height;
+	SDL_FillRect(stext,&temprect,SDL_MapRGB(stext->format,0,0,0));
 	SDL_Surface *stemp = NULL;
 	stemp = TTF_RenderUTF8_Blended(font, text, whitecol);
-	if ( SDL_BlitSurface(stemp,NULL,stext,temprect) == -1 )
+	if ( SDL_BlitSurface(stemp,NULL,stext,&temprect) == -1 )
 	{
 		fprintf(stderr,"error blitting line (%s)\n", SDL_GetError());
 		SDL_FreeSurface(stext);
 		SDL_FreeSurface(stemp);
-		free(temprect);
 		return;
 	}
-	free(temprect);
-	temprect = NULL;
 	SDL_FreeSurface(stemp);
 	SDL_Surface *stext2 = NULL;
 	SDL_Surface *fbox = SDL_CreateRGBSurface(SDL_SWSURFACE,width,height,dest->format->BitsPerPixel,dest->format->Rmask,dest->format->Gmask,dest->format->Bmask,dest->format->Amask);
-	SDL_FillRect(fbox,temprect,SDL_MapRGB(fbox->format,colr.r,colr.g,colr.b));
+	SDL_FillRect(fbox,&temprect,SDL_MapRGB(fbox->format,colr.r,colr.g,colr.b));
 	stext2 = TransferAlpha(fbox,stext);
 	SDL_FreeSurface(fbox);
-	temprect = malloc(sizeof(SDL_Rect));
+	SDL_FreeSurface(stext);
 	if ( rc == NULL )
 	{
-		temprect->x = offx;
-		temprect->y = offy;
+		temprect.x = offx;
+		temprect.y = offy;
 	}
 	else
 	{
-		temprect->x = rc->x+offx;
-		temprect->y = rc->y+offy;
+		temprect.x = rc->x+offx;
+		temprect.y = rc->y+offy;
 	}
-	temprect->w = width;
-	temprect->h = height;
-	if ( SDL_BlitSurface(stext2,NULL,dest,temprect) == -1 )
+	temprect.w = width;
+	temprect.h = height;
+	if ( SDL_BlitSurface(stext2,NULL,dest,&temprect) == -1 )
 	{
 		fprintf(stderr,"error blitting text box (%s)\n", SDL_GetError());
 		SDL_FreeSurface(stext2);
-		free(temprect);
 		return;
 	}
 	SDL_FreeSurface(stext2);
-	free(temprect);
 	if ( outw != NULL )
 		*outw = width;
 	if ( outh != NULL )
