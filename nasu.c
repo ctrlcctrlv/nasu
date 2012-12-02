@@ -40,9 +40,7 @@ int main(int argc, char **argv)
 	chdir("/usr/share/games/nasu");
 #endif
 	if ( scorefil == NULL )
-	{
 		score = 0;
-	}
 	else
 	{
 		fread((void *)&score,sizeof(unsigned long int),1,scorefil);
@@ -115,9 +113,7 @@ int main(int argc, char **argv)
 	SDL_Surface *mainscreen = NULL;
 	// Create window. If SDL can't set a fullscreen mode it'll fall back to windowed
 	if ( bIsFullscreen && (SDL_VideoModeOK(resx,resy,32,SDL_SWSURFACE|SDL_FULLSCREEN) != 0) )
-	{
 		mainscreen = SDL_SetVideoMode(resx,resy,32,SDL_SWSURFACE|SDL_FULLSCREEN);
-	}
 	else
 	{
 		bIsFullscreen = false;
@@ -437,120 +433,114 @@ int main(int argc, char **argv)
 		{
 			switch (Event.type)
 			{
-				case SDL_QUIT:
+			case SDL_QUIT:
+				bQueriedQuit = true;
+				break;
+			case SDL_KEYDOWN:
+				switch (Event.key.keysym.sym)
+				{
+				case SDLK_ESCAPE:
 					bQueriedQuit = true;
 					break;
-				case SDL_KEYDOWN:
-					switch (Event.key.keysym.sym)
+				case SDLK_F12:
+					#ifdef WINDOWS
+					SDL_SaveBMP(realscreen,"screenshot.bmp");
+					#else
+					snprintf(scrname,256,"%s/nasu_screenshot.bmp",getenv("HOME"));
+					SDL_SaveBMP(realscreen,scrname);
+					#endif
+					break;
+				case SDLK_F10:
+					bIsFullscreen = !bIsFullscreen;
+					SDL_FreeSurface(mainscreen);
+					mainscreen = NULL;
+					if ( bIsFullscreen && (SDL_VideoModeOK(resx,resy,32,SDL_SWSURFACE|SDL_FULLSCREEN) != 0) )
+						mainscreen = SDL_SetVideoMode(resx,resy,32,SDL_SWSURFACE|SDL_FULLSCREEN);
+					else
 					{
-						case SDLK_ESCAPE:
-							bQueriedQuit = true;
-							break;
-						case SDLK_F12:
-							#ifdef WINDOWS
-							SDL_SaveBMP(realscreen,"screenshot.bmp");
-							#else
-							snprintf(scrname,256,"%s/nasu_screenshot.bmp",getenv("HOME"));
-							SDL_SaveBMP(realscreen,scrname);
-							#endif
-							break;
-						case SDLK_F10:
-							bIsFullscreen = !bIsFullscreen;
-							SDL_FreeSurface(mainscreen);
-							mainscreen = NULL;
-							if ( bIsFullscreen && (SDL_VideoModeOK(resx,resy,32,SDL_SWSURFACE|SDL_FULLSCREEN) != 0) )
-							{
-								mainscreen = SDL_SetVideoMode(resx,resy,32,SDL_SWSURFACE|SDL_FULLSCREEN);
-							}
-							else
-							{
-								bIsFullscreen = false;
-								mainscreen = SDL_SetVideoMode(resx,resy,32,SDL_SWSURFACE);
-							}
-							break;
-						case SDLK_F11:
-							bShowFPS = !bShowFPS;
-							break;
-						case SDLK_RETURN:
-							if (GameState == 0)
-							{
-								if ( !bNoSound )
-									Mix_HaltMusic();
-								GameState = 3;
-								texty.animframe = 3;
-							}
-							break;
-						case SDLK_p:
-							if ( (GameState == 1) && !bLostGame )
-							{
-								GameState = 4;
-								if ( !bNoSound )
-									Mix_PauseMusic();
-								texty.animframe = 4;
-							}
-							else if ( GameState == 4 )
-							{
-								GameState = 1;
-								if ( !bNoSound )
-									Mix_ResumeMusic();
-								texty.animframe = 3;
-							}
-							break;
-						case SDLK_LEFT:
-						case SDLK_a:
-							if ( !bLostGame && (GameState == 1) && (player.pos.x+player.tbox.x1 > gamescreen.pos.x) )
-							{
-								player.bLeft = true;
-								player.vel.x = -60.f;
-							}
-							break;
-						case SDLK_RIGHT:
-						case SDLK_d:
-							if ( !bLostGame && (GameState == 1) && (player.pos.x+player.tbox.x2 < gamescreen.pos.x+gamescreen.dim.w) )
-							{
-								player.bLeft = false;
-								player.vel.x = 60.f;
-							}
-							break;
-						case SDLK_UP:
-						case SDLK_w:
-						case SDLK_z:
-						case SDLK_LSHIFT:
-							if ( !bLostGame && (GameState == 1) && !player.bIsJumping )
-							{
-								player.bIsJumping = true;
-								player.vel.y = -80.f;
-								if ( !bNoSound )
-									Mix_PlayChannel(-1,stepsnd[2],0);
-							}
-							break;
-						default:
-							break;
+						bIsFullscreen = false;
+						mainscreen = SDL_SetVideoMode(resx,resy,32,SDL_SWSURFACE);
 					}
 					break;
-				case SDL_KEYUP:
-					switch (Event.key.keysym.sym)
+				case SDLK_F11:
+					bShowFPS = !bShowFPS;
+					break;
+				case SDLK_RETURN:
+					if (GameState == 0)
 					{
-						case SDLK_LEFT:
-						case SDLK_a:
-							if ( !bLostGame && (GameState == 1) )
-							{
-								player.vel.x = 0.f;
-							}
-							break;
-						case SDLK_RIGHT:
-						case SDLK_d:
-							if ( !bLostGame && (GameState == 1) )
-							{
-								player.vel.x = 0.f;
-							}
-							break;
-						default:
-							break;
+						if ( !bNoSound )
+							Mix_HaltMusic();
+						GameState = 3;
+						texty.animframe = 3;
+					}
+					break;
+				case SDLK_p:
+					if ( (GameState == 1) && !bLostGame )
+					{
+						GameState = 4;
+						if ( !bNoSound )
+							Mix_PauseMusic();
+						texty.animframe = 4;
+					}
+					else if ( GameState == 4 )
+					{
+						GameState = 1;
+						if ( !bNoSound )
+							Mix_ResumeMusic();
+						texty.animframe = 3;
+					}
+					break;
+				case SDLK_LEFT:
+				case SDLK_a:
+					if ( !bLostGame && (GameState == 1) && (player.pos.x+player.tbox.x1 > gamescreen.pos.x) )
+					{
+						player.bLeft = true;
+						player.vel.x = -60.f;
+					}
+					break;
+				case SDLK_RIGHT:
+				case SDLK_d:
+					if ( !bLostGame && (GameState == 1) && (player.pos.x+player.tbox.x2 < gamescreen.pos.x+gamescreen.dim.w) )
+					{
+						player.bLeft = false;
+						player.vel.x = 60.f;
+					}
+					break;
+				case SDLK_UP:
+				case SDLK_w:
+				case SDLK_z:
+				case SDLK_LSHIFT:
+					if ( !bLostGame && (GameState == 1) && !player.bIsJumping )
+					{
+						player.bIsJumping = true;
+						player.vel.y = -80.f;
+						if ( !bNoSound )
+							Mix_PlayChannel(-1,stepsnd[2],0);
 					}
 					break;
 				default:
 					break;
+				}
+				break;
+			case SDL_KEYUP:
+				switch (Event.key.keysym.sym)
+				{
+				case SDLK_LEFT:
+				case SDLK_a:
+					if ( !bLostGame && (GameState == 1) )
+						player.vel.x = 0.f;
+					break;
+				case SDLK_RIGHT:
+				case SDLK_d:
+					if ( !bLostGame && (GameState == 1) )
+						player.vel.x = 0.f;
+					break;
+				default:
+					break;
+				}
+				break;
+			default:
+				break;
 			}
 		}
 
@@ -562,372 +552,372 @@ int main(int argc, char **argv)
 
 		switch (GameState)
 		{
-			case 0:		// Title screen
-				gamescreen.animframe = 2;
-				RenderActor(realscreen,&gamescreen);
-				snprintf(scorenumtxt.text,256,"%9u",score);
-				scorenumtxt.pos.x = 320.f-(112.f+CalcTextW(&scorenumtxt));
-				scorenumtxt.pos.y = 144.f;
-				scoretxt.pos.x = 112.f;
-				scoretxt.pos.y = 144.f;
-				snprintf(scoretxt.text,256,"Hi Score:");
-				RenderScrnText(realscreen,&scoretxt);
-				RenderScrnText(realscreen,&scorenumtxt);
-				break;
-			case 2:		// Lose screen
-				gamescreen.animframe = 3;
-				RenderActor(realscreen,&gamescreen);
-				blink += deltatime;
-				if ( blink >= 7.f )
+		case 0:		// Title screen
+			gamescreen.animframe = 2;
+			RenderActor(realscreen,&gamescreen);
+			snprintf(scorenumtxt.text,256,"%9u",score);
+			scorenumtxt.pos.x = 320.f-(112.f+CalcTextW(&scorenumtxt));
+			scorenumtxt.pos.y = 144.f;
+			scoretxt.pos.x = 112.f;
+			scoretxt.pos.y = 144.f;
+			snprintf(scoretxt.text,256,"Hi Score:");
+			RenderScrnText(realscreen,&scoretxt);
+			RenderScrnText(realscreen,&scorenumtxt);
+			break;
+		case 2:		// Lose screen
+			gamescreen.animframe = 3;
+			RenderActor(realscreen,&gamescreen);
+			blink += deltatime;
+			if ( blink >= 7.f )
+			{
+				if ( !bNoSound )
+					Mix_PlayMusic(titlemus,-1);
+				GameState = 0;
+			}
+			texty.animframe = 2;
+			snprintf(scorenumtxt.text,256,"%9lu",cscore);
+			scorenumtxt.pos.x = 320.f-(80.f+CalcTextW(&scorenumtxt));
+			scorenumtxt.pos.y = 164.f;
+			scoretxt.pos.x = 168.f;
+			scoretxt.pos.y = 164.f;
+			snprintf(scoretxt.text,256,"Score:");
+			RenderScrnText(realscreen,&scoretxt);
+			RenderScrnText(realscreen,&scorenumtxt);
+			RenderActor(realscreen,&texty);
+			break;
+		case 3:		// Game preparation
+			gamescreen.animframe = 0;
+			RenderActor(realscreen,&gamescreen);
+			blink += deltatime;
+			if ( blink > 0.25f )
+			{
+				blinkcounter++;
+				blink = 0.f;
+				bDerp = !bDerp;
+				if ( !bDerp )
+					texty.animframe = 3;
+				else
 				{
-					if ( !bNoSound )
-						Mix_PlayMusic(titlemus,-1);
-					GameState = 0;
+					if ( blinkcounter < 7 )
+						texty.animframe = 0;
+					else
+						texty.animframe = 1;
 				}
-				texty.animframe = 2;
-				snprintf(scorenumtxt.text,256,"%9lu",cscore);
-				scorenumtxt.pos.x = 320.f-(80.f+CalcTextW(&scorenumtxt));
-				scorenumtxt.pos.y = 164.f;
-				scoretxt.pos.x = 168.f;
-				scoretxt.pos.y = 164.f;
-				snprintf(scoretxt.text,256,"Score:");
-				RenderScrnText(realscreen,&scoretxt);
-				RenderScrnText(realscreen,&scorenumtxt);
-				RenderActor(realscreen,&texty);
-				break;
-			case 3:		// Game preparation
-				gamescreen.animframe = 0;
-				RenderActor(realscreen,&gamescreen);
+			}
+			if ( blinkcounter >= 8 )
+			{
+				bDerp = false;
+				blinkcounter = 0;
+				GameState = 1;
+				if ( !bNoSound )
+					Mix_PlayMusic(gamemus,-1);
+			}
+			difficulty = 0.f;
+			cscore = 0;
+			TimeUntilNextNasu = 2.0f;
+			TimeUntilNextNasuB = 25.f;
+			bLostGame = false;
+			pts1time = 0.f;
+			pts2time = 0.f;
+			pts3time = 0.f;
+			player.animframe = 0;
+			player.bLeft = 0;
+			player.bIsJumping = 0;
+			player.pos.x = 160.f;
+			player.pos.y = 149.f;
+			nasu.pos.x = 4.f;
+			nasu.pos.y = 4.f;
+			nasu_b.pos.x = 12.f;
+			nasu_b.pos.y = 4.f;
+			points1.pos.x = 16.f;
+			points1.pos.y = 16.f;
+			points2.pos.x = 16.f;
+			points2.pos.y = 32.f;
+			points3.pos.x = 16.f;
+			points3.pos.y = 48.f;
+			RenderPlayer(realscreen,&player);
+			snprintf(scorenumtxt.text,256,"%9lu",cscore);
+			scorenumtxt.pos.x = 320.f-(80.f+CalcTextW(&scorenumtxt));
+			scorenumtxt.pos.y = 164.f;
+			scoretxt.pos.x = 168.f;
+			scoretxt.pos.y = 164.f;
+			snprintf(scoretxt.text,256,"Score:");
+			RenderScrnText(realscreen,&scoretxt);
+			RenderScrnText(realscreen,&scorenumtxt);
+			RenderActor(realscreen,&texty);
+			break;
+		case 4:		// Paused
+			RenderActor(realscreen,&gamescreen);
+			RenderPlayer(realscreen,&player);
+			RenderActor(realscreen,&nasu);
+			RenderActor(realscreen,&nasu_b);
+			snprintf(scorenumtxt.text,256,"%9lu",cscore);
+			scorenumtxt.pos.x = 320.f-(80.f+CalcTextW(&scorenumtxt));
+			scorenumtxt.pos.y = 164.f;
+			scoretxt.pos.x = 168.f;
+			scoretxt.pos.y = 164.f;
+			snprintf(scoretxt.text,256,"Score:");
+			RenderScrnText(realscreen,&scoretxt);
+			RenderScrnText(realscreen,&scorenumtxt);
+			RenderActor(realscreen,&texty);
+			break;
+		default:	// Main game
+			if ( bLostGame )
+			{
+				player.vel.x = 0.f;
+				player.vel.y = 0.f;
 				blink += deltatime;
-				if ( blink > 0.25f )
+				if ( blink > 0.125f )
 				{
 					blinkcounter++;
 					blink = 0.f;
 					bDerp = !bDerp;
-					if ( !bDerp )
-						texty.animframe = 3;
+					if ( bDerp )
+						gamescreen.animframe = 0;
 					else
-					{
-						if ( blinkcounter < 7 )
-							texty.animframe = 0;
-						else
-							texty.animframe = 1;
-					}
+						gamescreen.animframe = 1;
 				}
-				if ( blinkcounter >= 8 )
+				if ( blinkcounter >= 12 )
 				{
-					bDerp = false;
 					blinkcounter = 0;
-					GameState = 1;
 					if ( !bNoSound )
-						Mix_PlayMusic(gamemus,-1);
+						Mix_PlayMusic(losemus,0);
+					blink = 0.f;
+					GameState = 2;
+					bDerp = false;
 				}
-				difficulty = 0.f;
-				cscore = 0;
-				TimeUntilNextNasu = 2.0f;
-				TimeUntilNextNasuB = 25.f;
-				bLostGame = false;
-				pts1time = 0.f;
-				pts2time = 0.f;
-				pts3time = 0.f;
-				player.animframe = 0;
-				player.bLeft = 0;
-				player.bIsJumping = 0;
-				player.pos.x = 160.f;
-				player.pos.y = 149.f;
-				nasu.pos.x = 4.f;
-				nasu.pos.y = 4.f;
-				nasu_b.pos.x = 12.f;
-				nasu_b.pos.y = 4.f;
-				points1.pos.x = 16.f;
-				points1.pos.y = 16.f;
-				points2.pos.x = 16.f;
-				points2.pos.y = 32.f;
-				points3.pos.x = 16.f;
-				points3.pos.y = 48.f;
-				RenderPlayer(realscreen,&player);
-				snprintf(scorenumtxt.text,256,"%9lu",cscore);
-				scorenumtxt.pos.x = 320.f-(80.f+CalcTextW(&scorenumtxt));
-				scorenumtxt.pos.y = 164.f;
-				scoretxt.pos.x = 168.f;
-				scoretxt.pos.y = 164.f;
-				snprintf(scoretxt.text,256,"Score:");
-				RenderScrnText(realscreen,&scoretxt);
-				RenderScrnText(realscreen,&scorenumtxt);
-				RenderActor(realscreen,&texty);
-				break;
-			case 4:		// Paused
-				RenderActor(realscreen,&gamescreen);
-				RenderPlayer(realscreen,&player);
-				RenderActor(realscreen,&nasu);
-				RenderActor(realscreen,&nasu_b);
-				snprintf(scorenumtxt.text,256,"%9lu",cscore);
-				scorenumtxt.pos.x = 320.f-(80.f+CalcTextW(&scorenumtxt));
-				scorenumtxt.pos.y = 164.f;
-				scoretxt.pos.x = 168.f;
-				scoretxt.pos.y = 164.f;
-				snprintf(scoretxt.text,256,"Score:");
-				RenderScrnText(realscreen,&scoretxt);
-				RenderScrnText(realscreen,&scorenumtxt);
-				RenderActor(realscreen,&texty);
-				break;
-			default:	// Main game
-				if ( bLostGame )
+			}
+			else
+			{
+				gamescreen.animframe = 0;
+				blink += deltatime;
+				if ( blink > 0.125f )
 				{
-					player.vel.x = 0.f;
-					player.vel.y = 0.f;
-					blink += deltatime;
-					if ( blink > 0.125f )
+					bDerp = !bDerp;
+					blink = 0.f;
+					if ( !bNoSound )
 					{
-						blinkcounter++;
-						blink = 0.f;
-						bDerp = !bDerp;
-						if ( bDerp )
-							gamescreen.animframe = 0;
-						else
-							gamescreen.animframe = 1;
+						if ( player.vel.x != 0.f && !player.bIsJumping )
+						{
+							if ( bDerp )
+								Mix_PlayChannel(-1,stepsnd[0],0);
+							else
+								Mix_PlayChannel(-1,stepsnd[1],0);
+						}
 					}
-					if ( blinkcounter >= 12 )
+				}
+				
+				if ( TimeUntilNextNasu > 0.f )
+				{
+					TimeUntilNextNasu -= deltatime;
+					nasu.pos.x = 4.f;
+					nasu.pos.y = 4.f;
+					
+					if ( TimeUntilNextNasu <= 0.f )
 					{
-						blinkcounter = 0;
-						if ( !bNoSound )
-							Mix_PlayMusic(losemus,0);
-						blink = 0.f;
-						GameState = 2;
-						bDerp = false;
+						TimeUntilNextNasu = 0.f;
+						nasu.pos.x = (float)(rand()%160+80);
+						nasu.pos.y = 0.f;
+						nasu.vel.y = 50.f+difficulty*0.3f;
 					}
 				}
 				else
 				{
-					gamescreen.animframe = 0;
-					blink += deltatime;
-					if ( blink > 0.125f )
+					MoveActor(&nasu,deltatime);
+					Nasupos = nasu.pos;
+					if ( CollidePlayer(&nasu,&player) && player.bIsJumping )
 					{
-						bDerp = !bDerp;
-						blink = 0.f;
-						if ( !bNoSound )
+						if ( (rand()%(30+(int)(difficulty*0.35f))) == 0 )
 						{
-							if ( player.vel.x != 0.f && !player.bIsJumping )
-							{
-								if ( bDerp )
-									Mix_PlayChannel(-1,stepsnd[0],0);
-								else
-									Mix_PlayChannel(-1,stepsnd[1],0);
-							}
-						}
-					}
-					
-					if ( TimeUntilNextNasu > 0.f )
-					{
-						TimeUntilNextNasu -= deltatime;
-						nasu.pos.x = 4.f;
-						nasu.pos.y = 4.f;
-						
-						if ( TimeUntilNextNasu <= 0.f )
-						{
-							TimeUntilNextNasu = 0.f;
-							nasu.pos.x = (float)(rand()%160+80);
-							nasu.pos.y = 0.f;
-							nasu.vel.y = 50.f+difficulty*0.3f;
-						}
-					}
-					else
-					{
-						MoveActor(&nasu,deltatime);
-						Nasupos = nasu.pos;
-						if ( CollidePlayer(&nasu,&player) && player.bIsJumping )
-						{
-							if ( (rand()%(30+(int)(difficulty*0.35f))) == 0 )
-							{
-								cscore += 1000;
-								if ( cscore > score )
-									score = cscore;
-								TimeUntilNextNasu = 2.f-(difficulty*0.03f);
-								if ( TimeUntilNextNasu <= 0.1f )
-									TimeUntilNextNasu = 0.1f;
-								nasu.pos.x = 4.f;
-								nasu.pos.y = 4.f;
-								if ( !bNoSound )
-									Mix_PlayChannel(-1,getsnd[2],0);
-								pts3time += 0.75f;
-								points3.pos = Nasupos;
-								points3.vel.y = -50.f;
-								difficulty += 7.5f;
-							}
-							else
-							{
-								cscore += 10;
-								if ( cscore > score )
-									score = cscore;
-								TimeUntilNextNasu = 2.f-(difficulty*0.03f);
-								if ( TimeUntilNextNasu <= 0.1f )
-									TimeUntilNextNasu = 0.1f;
-								nasu.pos.x = 4.f;
-								nasu.pos.y = 4.f;
-								if ( !bNoSound )
-									Mix_PlayChannel(-1,getsnd[0],0);
-								pts1time += 0.75f;
-								points1.pos = Nasupos;
-								points1.vel.y = -50.f;
-								difficulty += 1.f;
-							}
-						}
-						else if ( nasu.pos.y >= 160.f )
-						{
-							if ( !bNoSound )
-							{
-								Mix_HaltMusic();
-								Mix_PlayChannel(-1,losesnd,0);
-							}
-							bLostGame = true;
-						}
-					}
-					
-					if ( TimeUntilNextNasuB > 0.f )
-					{
-						TimeUntilNextNasuB -= deltatime;
-						nasu_b.pos.x = 12.f;
-						nasu_b.pos.y = 4.f;
-						if ( TimeUntilNextNasuB <= 0.f )
-						{
-							TimeUntilNextNasuB = 0.f;
-							int decideposb = rand()%2;
-							switch (decideposb)
-							{
-							case 0:
-								nasu_b.vel.x = (50.f+difficulty*0.15f);
-								nasu_b.vel.y = 0.f;
-								nasu_b.pos.x = 0.f;
-								nasu_b.pos.y = 160.f;
-								nasu_b.animframe = 2;
-								break;
-							default:
-								nasu_b.vel.x = -(50.f+difficulty*0.15f);
-								nasu_b.vel.y = 0.f;
-								nasu_b.pos.x = 320.f;
-								nasu_b.pos.y = 160.f;
-								nasu_b.animframe = 1;
-								break;
-							}
-						}
-					}
-					else
-					{
-						nasu_b.vel.y += (120.f+difficulty*0.75f)*deltatime;
-						MoveActor(&nasu_b,deltatime);
-						Nasubpos = nasu_b.pos;
-						if ( CollidePlayer(&nasu_b,&player) && player.bIsJumping )
-						{
-							cscore += 300;
+							cscore += 1000;
 							if ( cscore > score )
 								score = cscore;
-							TimeUntilNextNasuB = 25.f+(difficulty*0.1f);
-							nasu_b.pos.x = 12.f;
-							nasu_b.pos.y = 4.f;
+							TimeUntilNextNasu = 2.f-(difficulty*0.03f);
+							if ( TimeUntilNextNasu <= 0.1f )
+								TimeUntilNextNasu = 0.1f;
+							nasu.pos.x = 4.f;
+							nasu.pos.y = 4.f;
 							if ( !bNoSound )
-								Mix_PlayChannel(-1,getsnd[1],0);
-							pts2time += 0.75f;
-							points2.pos = Nasubpos;
-							points2.vel.y = -50.f;
-							difficulty += 2.5f;
+								Mix_PlayChannel(-1,getsnd[2],0);
+							pts3time += 0.75f;
+							points3.pos = Nasupos;
+							points3.vel.y = -50.f;
+							difficulty += 7.5f;
 						}
-						if ( (nasu_b.vel.x > 0.f) && (nasu_b.pos.x > gamescreen.pos.x+gamescreen.dim.w) )
-						{
-							TimeUntilNextNasuB = 25.f+(difficulty*0.15f);
-							nasu_b.pos.x = 12.f;
-							nasu_b.pos.y = 4.f;
-						}
-						if ( (nasu_b.vel.x < 0.f) && (nasu_b.pos.x < gamescreen.pos.x) )
-						{
-							TimeUntilNextNasuB = 25.f+(difficulty*0.15f);
-							nasu_b.pos.x = 12.f;
-							nasu_b.pos.y = 4.f;
-						}
-						if ( nasu_b.pos.y >= 160.f )
-							nasu_b.vel.y = -(80.f+difficulty*0.65f);
-					}
-					
-					MovePlayer(&player,deltatime);
-					if ( player.bIsJumping )
-						player.vel.y += 480.f*deltatime;
-					if ( player.pos.y >= 149.f )
-					{
-						player.pos.y = 149.f;
-						player.bIsJumping = false;
-					}
-					if ( player.pos.x+player.tbox.x1 <= gamescreen.pos.x )
-					{
-						player.pos.x = gamescreen.pos.x-player.tbox.x1;
-						player.vel.x = 0;
-					}
-					if ( player.pos.x+player.tbox.x2 >= gamescreen.pos.x+gamescreen.dim.w )
-					{
-						
-						player.pos.x = (gamescreen.pos.x+gamescreen.dim.w)+player.tbox.x1;
-						player.vel.x = 0;
-					}
-					if ( player.bIsJumping )
-						player.animframe = 3;
-					else if ( player.vel.x != 0.f )
-					{
-						if ( bDerp )
-							player.animframe = 2;
 						else
-							player.animframe = 1;
-					}
-					else
-						player.animframe = 0;
-					
-					if ( pts1time > 0.f )
-					{
-						pts1time -= deltatime;
-						MoveActor(&points1,deltatime);
-						if ( pts1time <= 0 )
 						{
-							points1.vel.y = 0.f;
-							points1.pos.x = 16.f;
-							points1.pos.y = 16.f;
+							cscore += 10;
+							if ( cscore > score )
+								score = cscore;
+							TimeUntilNextNasu = 2.f-(difficulty*0.03f);
+							if ( TimeUntilNextNasu <= 0.1f )
+								TimeUntilNextNasu = 0.1f;
+							nasu.pos.x = 4.f;
+							nasu.pos.y = 4.f;
+							if ( !bNoSound )
+								Mix_PlayChannel(-1,getsnd[0],0);
+							pts1time += 0.75f;
+							points1.pos = Nasupos;
+							points1.vel.y = -50.f;
+							difficulty += 1.f;
 						}
 					}
-					if ( pts2time > 0.f )
+					else if ( nasu.pos.y >= 160.f )
 					{
-						pts2time -= deltatime;
-						MoveActor(&points2,deltatime);
-						if ( pts2time <= 0 )
+						if ( !bNoSound )
 						{
-							points2.vel.y = 0.f;
-							points2.pos.x = 16.f;
-							points2.pos.y = 32.f;
+							Mix_HaltMusic();
+							Mix_PlayChannel(-1,losesnd,0);
 						}
+						bLostGame = true;
 					}
-					if ( pts3time > 0.f )
+				}
+				
+				if ( TimeUntilNextNasuB > 0.f )
+				{
+					TimeUntilNextNasuB -= deltatime;
+					nasu_b.pos.x = 12.f;
+					nasu_b.pos.y = 4.f;
+					if ( TimeUntilNextNasuB <= 0.f )
 					{
-						pts3time -= deltatime;
-						MoveActor(&points3,deltatime);
-						if ( pts3time <= 0 )
+						TimeUntilNextNasuB = 0.f;
+						int decideposb = rand()%2;
+						switch (decideposb)
 						{
-							points3.vel.y = 0.f;
-							points3.pos.x = 16.f;
-							points3.pos.y = 48.f;
+						case 0:
+							nasu_b.vel.x = (50.f+difficulty*0.15f);
+							nasu_b.vel.y = 0.f;
+							nasu_b.pos.x = 0.f;
+							nasu_b.pos.y = 160.f;
+							nasu_b.animframe = 2;
+							break;
+						default:
+							nasu_b.vel.x = -(50.f+difficulty*0.15f);
+							nasu_b.vel.y = 0.f;
+							nasu_b.pos.x = 320.f;
+							nasu_b.pos.y = 160.f;
+							nasu_b.animframe = 1;
+							break;
 						}
 					}
 				}
-				RenderActor(realscreen,&gamescreen);
-				RenderPlayer(realscreen,&player);
-				RenderActor(realscreen,&nasu);
-				RenderActor(realscreen,&nasu_b);
-				RenderActor(realscreen,&points1);
-				RenderActor(realscreen,&points2);
-				RenderActor(realscreen,&points3);
-				snprintf(scorenumtxt.text,256,"%9lu",cscore);
-				scorenumtxt.pos.x = 320.f-(80.f+CalcTextW(&scorenumtxt));
-				scorenumtxt.pos.y = 164.f;
-				scoretxt.pos.x = 168.f;
-				scoretxt.pos.y = 164.f;
-				snprintf(scoretxt.text,256,"Score:");
-				RenderScrnText(realscreen,&scoretxt);
-				RenderScrnText(realscreen,&scorenumtxt);
-				break;
+				else
+				{
+					nasu_b.vel.y += (120.f+difficulty*0.75f)*deltatime;
+					MoveActor(&nasu_b,deltatime);
+					Nasubpos = nasu_b.pos;
+					if ( CollidePlayer(&nasu_b,&player) && player.bIsJumping )
+					{
+						cscore += 300;
+						if ( cscore > score )
+							score = cscore;
+						TimeUntilNextNasuB = 25.f+(difficulty*0.1f);
+						nasu_b.pos.x = 12.f;
+						nasu_b.pos.y = 4.f;
+						if ( !bNoSound )
+							Mix_PlayChannel(-1,getsnd[1],0);
+						pts2time += 0.75f;
+						points2.pos = Nasubpos;
+						points2.vel.y = -50.f;
+						difficulty += 2.5f;
+					}
+					if ( (nasu_b.vel.x > 0.f) && (nasu_b.pos.x > gamescreen.pos.x+gamescreen.dim.w) )
+					{
+						TimeUntilNextNasuB = 25.f+(difficulty*0.15f);
+						nasu_b.pos.x = 12.f;
+						nasu_b.pos.y = 4.f;
+					}
+					if ( (nasu_b.vel.x < 0.f) && (nasu_b.pos.x < gamescreen.pos.x) )
+					{
+						TimeUntilNextNasuB = 25.f+(difficulty*0.15f);
+						nasu_b.pos.x = 12.f;
+						nasu_b.pos.y = 4.f;
+					}
+					if ( nasu_b.pos.y >= 160.f )
+						nasu_b.vel.y = -(80.f+difficulty*0.65f);
+				}
+				
+				MovePlayer(&player,deltatime);
+				if ( player.bIsJumping )
+					player.vel.y += 480.f*deltatime;
+				if ( player.pos.y >= 149.f )
+				{
+					player.pos.y = 149.f;
+					player.bIsJumping = false;
+				}
+				if ( player.pos.x+player.tbox.x1 <= gamescreen.pos.x )
+				{
+					player.pos.x = gamescreen.pos.x-player.tbox.x1;
+					player.vel.x = 0;
+				}
+				if ( player.pos.x+player.tbox.x2 >= gamescreen.pos.x+gamescreen.dim.w )
+				{
+					
+					player.pos.x = (gamescreen.pos.x+gamescreen.dim.w)+player.tbox.x1;
+					player.vel.x = 0;
+				}
+				if ( player.bIsJumping )
+					player.animframe = 3;
+				else if ( player.vel.x != 0.f )
+				{
+					if ( bDerp )
+						player.animframe = 2;
+					else
+						player.animframe = 1;
+				}
+				else
+					player.animframe = 0;
+				
+				if ( pts1time > 0.f )
+				{
+					pts1time -= deltatime;
+					MoveActor(&points1,deltatime);
+					if ( pts1time <= 0 )
+					{
+						points1.vel.y = 0.f;
+						points1.pos.x = 16.f;
+						points1.pos.y = 16.f;
+					}
+				}
+				if ( pts2time > 0.f )
+				{
+					pts2time -= deltatime;
+					MoveActor(&points2,deltatime);
+					if ( pts2time <= 0 )
+					{
+						points2.vel.y = 0.f;
+						points2.pos.x = 16.f;
+						points2.pos.y = 32.f;
+					}
+				}
+				if ( pts3time > 0.f )
+				{
+					pts3time -= deltatime;
+					MoveActor(&points3,deltatime);
+					if ( pts3time <= 0 )
+					{
+						points3.vel.y = 0.f;
+						points3.pos.x = 16.f;
+						points3.pos.y = 48.f;
+					}
+				}
+			}
+			RenderActor(realscreen,&gamescreen);
+			RenderPlayer(realscreen,&player);
+			RenderActor(realscreen,&nasu);
+			RenderActor(realscreen,&nasu_b);
+			RenderActor(realscreen,&points1);
+			RenderActor(realscreen,&points2);
+			RenderActor(realscreen,&points3);
+			snprintf(scorenumtxt.text,256,"%9lu",cscore);
+			scorenumtxt.pos.x = 320.f-(80.f+CalcTextW(&scorenumtxt));
+			scorenumtxt.pos.y = 164.f;
+			scoretxt.pos.x = 168.f;
+			scoretxt.pos.y = 164.f;
+			snprintf(scoretxt.text,256,"Score:");
+			RenderScrnText(realscreen,&scoretxt);
+			RenderScrnText(realscreen,&scorenumtxt);
+			break;
 		}
 
 		// render frame
