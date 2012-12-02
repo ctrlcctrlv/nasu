@@ -10,7 +10,7 @@
 // blit one surface into another at a specific location
 extern int BlitAt( SDL_Surface *src, SDL_Rect *srcrect, SDL_Surface *dest, int x, int y, bool bcenterx, bool bcentery )
 {
-	SDL_Rect offsetrect = malloc(sizeof(SDL_Rect));
+	SDL_Rect *offsetrect = malloc(sizeof(SDL_Rect));
 	offsetrect->x = bcenterx ? (x-src->w/2) : x;
 	offsetrect->y = bcentery ? (y-src->h/2) : y;
 	offsetrect->w = src->w;
