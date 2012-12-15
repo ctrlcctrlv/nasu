@@ -5,12 +5,11 @@
 # Autoinstall steps were reduced to just making a new directory called "Distrib"
 # and putting the files there. Where it all ends up is up to the user
 #
-CFLAGS := -std=c11 -Wall -Wextra -O2 -pipe -DWINDOWS -I/usr/include/SDL
-LDFLAGS := -Wall -Wextra -O1 -DWINDOWS
+CFLAGS := -std=c11 -Wall -Wextra -pedantic -O2 -pipe -Wno-unused-function -Wno-unused-parameter -Wno-maybe-uninitialized -DWINDOWS -I/usr/include/SDL
 LIBS := -lSDL -lSDLmain -lSDL_image -lSDL_ttf -lSDL_mixer -lSDL_gfx -lm
 .PHONY : clean
 nasu : obj
-	$(CC) $(LDFLAGS) $(LIBS) helpers_pixelfunc.o helpers_drawextras.o helpers_nasudef.o nasu.o -o nasu.exe
+	$(CC) $(CFLAGS) $(LIBS) helpers_pixelfunc.o helpers_drawextras.o helpers_nasudef.o nasu.o -o nasu.exe
 obj:
 	$(CC) $(CFLAGS) -c helpers_pixelfunc.c -o helpers_pixelfunc.o
 	$(CC) $(CFLAGS) -c helpers_drawextras.c -o helpers_drawextras.o

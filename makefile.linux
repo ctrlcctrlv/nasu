@@ -11,12 +11,11 @@
 # then that's quite weird, just specify a different value for SDLHEADERS
 #
 SDLHEADERS ?= /usr/include/SDL
-CFLAGS := -std=c11 -Wall -Wextra -O2 -pipe -I$(SDLHEADERS)
-LDFLAGS := -Wall -Wextra -O1
+CFLAGS := -std=c11 -Wall -Wextra -pedantic -O2 -pipe -Wno-unused-function -Wno-unused-parameter -Wno-maybe-uninitialized -I$(SDLHEADERS)
 LIBS := -lSDL -lSDLmain -lSDL_image -lSDL_ttf -lSDL_mixer -lSDL_gfx -lm
 .PHONY : clean install uninstall
 nasu : obj
-	$(CC) $(LDFLAGS) $(LIBS) helpers_pixelfunc.o helpers_drawextras.o helpers_nasudef.o nasu.o -o nasu
+	$(CC) $(CFLAGS) $(LIBS) helpers_pixelfunc.o helpers_drawextras.o helpers_nasudef.o nasu.o -o nasu
 obj:
 	$(CC) $(CFLAGS) -c helpers_pixelfunc.c -o helpers_pixelfunc.o
 	$(CC) $(CFLAGS) -c helpers_drawextras.c -o helpers_drawextras.o
